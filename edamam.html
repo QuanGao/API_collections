@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src='https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js'></script> 
+    <link rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css' integrity='sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u' crossorigin='anonymous'>     
+    <title>Edamam</title>
+    <style>
+        body{text-align: center}
+    </style>
+</head>
+<body>
+    <h1>Testing Edamam API</h1>
+    <div class="row">
+        <div class="col-md-3">
+        <div class="col-md-6">
+            <div class="input-group">
+            <input type="text" class="form-control" placeholder="Search for recipe by cuisine">
+            <span class="input-group-btn">
+                <button class="btn btn-default" type="button">Go!</button>
+            </span>
+            </div>
+        </div>
+        <div class="col-md-3"></div>
+        <div class="row">
+            <div class="col-md-12 recipes">
+
+            </div>
+        </div>
+    </div>
+    
+    <script>
+    var displayRecipe = function(){ 
+        var newDiv = $("<div>");
+        var name = $("<h3>").text(dish.name);
+        var img = $("<img>")
+        img.attr("src",dish.imgURL);
+        var link = $("<a>").text(dish.source);
+        link.attr("src",dish.repURL)             
+        newDiv.append(name).append(img).append(link);
+        $(".recipes").append(newDiv);
+    }
+    var dish = {};
+    $("button").on("click",function(){
+        var style=$("input").val()
+        console.log(style)
+        var apiKey = "3c5cf2a76798a4875b2063b8fb23d043"
+        var appID = "ab462d6d"
+        var queryURL = `https://api.edamam.com/search?q=${style}&app_id=${appID}&app_key=${apiKey}&from=0&to=3&calories=gte%20591,%20lte%20722&health=alcohol-free`     
+        $.ajax({
+            url: queryURL,
+            method: "GET"
+        }).done(function(response){
+            if(response){ 
+                for (var j=0; j<3; j++){
+                    var data = response.hits[j].recipe;
+                    dish = {
+                        name: data.label,
+                        imgURL: data.image,
+                        source: data.source,
+                        repURL: data.url  
+                    }
+                    displayRecipe();
+                }
+            }
+        });   
+    })
+    </script>
+</body>
+</html>
