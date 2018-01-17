@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src='https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js'></script> 
+    <link rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css' integrity='sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u' crossorigin='anonymous'>     
+    <title>Google Place</title>
+    <style>
+        body{text-align: center}
+        .input-group{width:500px; margin:auto}
+    </style>
+</head>
+<body>
+    <h1>Google Place API</h1>
+    <div class="row">
+        <div class="col-md-3 col-lg-3">
+        <div class="col-md-6  col-lg-6 searchBar">
+            <div class="input-group">
+            <input type="text" class="form-control" placeholder="Search for any restaurants">
+            <span class="input-group-btn">
+                <button class="btn btn-default" type="button">Go!</button>
+            </span>
+            </div>
+        </div>
+        <div class="col-md-3 col-lg-3"></div>
+        <div class="row">
+            <div class="col-md-12 places">
+            </div>
+        </div>
+    </div>
+    <script>
+    $("document").ready(function(){
+        //Write a function to get photo using photo reference returned by AJAX request
+        var getPhotoURLByReference=function(ref){
+            return `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${ref}&key=AIzaSyCBPyv2jsI299n6NBrTgszQfbPzWI-4ukc`
+        };
+        //click submit to send AJAX and store img URL in photoRef variable.
+        $("button").on("click", function (event){
+                    $(".places").empty();
+                    event.preventDefault();
+                    var search = $("input").val().trim();
+                    var queryURL =  'https://cors-anywhere.herokuapp.com/' + 
+                    'https://maps.googleapis.com/maps/api/place/textsearch/json?query=restaurants+in+ChicagoIL' + 
+                    search + '&key=AIzaSyCBPyv2jsI299n6NBrTgszQfbPzWI-4ukc';
+            $.ajax({
+                url: queryURL,
+                method : "GET"
+            })
+            .done(function(response){   
+                var result = response.results;                      
+                for (var i = 0; i < result.length; i++) {
+                    var restaurantDiv = $("<div>").text(result[i].name); 
+                    var p = $("<p>").text("Rating: " + result[i].rating);
+                    var address = $("<p>").text("Adress: " + result[i].formatted_address);
+                    //this is where I store the photoreference                 
+                    var photoRef = result[i].photos[0].photo_reference;
+                    var url = getPhotoURLByReference(photoRef)
+                    var img = $("<img>")
+                    img.attr("src",url)
+                    restaurantDiv.append(p,address,img);
+                    $(".places").append(restaurantDiv);
+                }        
+            });
+        });
+    })
+    
+    
+    
+    
+    
+    </script>
+</body>
+</html>
