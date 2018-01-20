@@ -37,16 +37,17 @@
                     $(".places").empty();
                     event.preventDefault();
                     var search = $("input").val().trim();
-                    var queryURL = "https://cors-anywhere.herokuapp.com/" + 
-                    "https://developers.zomato.com/api/v2.1/search?entity_type=zone&q=goat&start=0&count=3&lat=41.884109&lon=-87.6479755&apikey=76bdd00d04ef3b4840c98961c3dd363e"
+                    var queryURL = "https://cors-anywhere.herokuapp.com/https://developers.zomato.com/api/v2.1/search?entity_type=zone&q="+ search + "&start=0&count=5&lat=41.884109&lon=-87.6479755&apikey=76bdd00d04ef3b4840c98961c3dd363e"
 
             $.ajax({
                 url: queryURL,
                 method : "GET"
             })
             .done(function(response){   
-                var result = response; 
-                console.log(response)                     
+                // var result = response.restaurants[0].restaurant;
+                var result = response.restaurants[0].restaurant.cuisines;
+                console.log(result) 
+                // console.log(result.cuisines)                     
                 // for (var i = 0; i < result.length; i++) {
                 //     var restaurantDiv = $("<div>").text(result[i].name); 
                 //     var p = $("<p>").text("Rating: " + result[i].rating);
