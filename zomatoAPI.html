@@ -10,6 +10,10 @@
     <style>
         body{text-align: center};
         .input-group{width:500px; margin:auto}
+        .rest_name{font-weight: bold; text-decoration:underline; cursor: pointer}
+        img{height:200px;}
+        .places{width:50%; margin:auto}
+        .rest_name:hover{color:blue}
     </style>
 </head>
 <body>
@@ -26,42 +30,44 @@
         </div>
         <div class="col-md-3 col-lg-3"></div>
         <div class="row">
-            <div class="col-md-12 places">
-            </div>
+            <div class="col-md-12 places"></div>      
         </div>
     </div>
     <script>
     $("document").ready(function(){
-        
+        $("input").val("");
         $("button").on("click", function (event){
                     $(".places").empty();
                     event.preventDefault();
                     var search = $("input").val().trim();
-                    var queryURL = "https://cors-anywhere.herokuapp.com/https://developers.zomato.com/api/v2.1/search?entity_type=zone&q="+ search + "&start=0&count=5&lat=41.884109&lon=-87.6479755&apikey=76bdd00d04ef3b4840c98961c3dd363e"
+                    var queryURL = "https://cors-anywhere.herokuapp.com/https://developers.zomato.com/api/v2.1/search?entity_type=zone&q="+ search + "&start=0&count=10&lat=41.881832&lon=-87.623177&apikey=76bdd00d04ef3b4840c98961c3dd363e"
 
             $.ajax({
                 url: queryURL,
                 method : "GET"
             })
             .done(function(response){   
-                // var result = response.restaurants[0].restaurant;
-                var result = response.restaurants[0].restaurant.cuisines;
-                console.log(result) 
-                // console.log(result.cuisines)                     
-                // for (var i = 0; i < result.length; i++) {
-                //     var restaurantDiv = $("<div>").text(result[i].name); 
-                //     var p = $("<p>").text("Rating: " + result[i].rating);
-                //     var address = $("<p>").text("Adress: " + result[i].formatted_address);
-                //     //this is where I store the photoreference                 
-                //     var photoRef = result[i].photos[0].photo_reference;
-                //     var url = getPhotoURLByReference(photoRef)
-                //     var img = $("<img>")
-                //     img.attr("src",url)
-                //     restaurantDiv.append(p,address,img);
-                //     $(".places").append(restaurantDiv);
-                // }        
-            });
+                var result = response.restaurants;
+                console.log(response.restaurants[0])                    
+                for (var i = 0; i < result.length; i++){
+                    var rest = result[i].restaurant;
+                    var newDiv = $("<div class = 'panel panel-default'>")
+                    var label = $("<div class = 'panel-heading rest_name'>").text(rest.name);
+                    var location = $("<p>").text("Address: " + rest.location.address);
+                    label.attr({"data-cuisine": rest.cuisines, "data-name":rest.name});   
+                    var url = rest.featured_image || "assets/images/Sorry-Image-Not-Available.png"
+                    var img = $(`<img src=${url}>`);
+                    newDiv.append(label,location,img);
+                    $(".places").append(newDiv);
+                }        
+            });            
         });
+        $(".places").on("click",".rest_name",function(){
+            var name = $(this).attr("data-name");
+            var style = $(this).attr("data-cuisine");
+            console.log("name: "+ name + " cusine type: "+ style)
+        })
+
     })
     </script>   
 </body>
